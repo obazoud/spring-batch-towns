@@ -1,6 +1,7 @@
 package com.bazoud.springbatch.towns.batch.configuration;
 
 import com.bazoud.springbatch.towns.batch.configuration.step.DepartmentStepConfiguration;
+import com.bazoud.springbatch.towns.batch.configuration.step.FailedStepConfiguration;
 import com.bazoud.springbatch.towns.batch.configuration.step.TownStepConfiguration;
 import com.bazoud.springbatch.towns.batch.configuration.step.UnzipStepConfiguration;
 import com.bazoud.springbatch.towns.batch.listener.TraceJobExecutionListener;
@@ -15,7 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
-@Import(value = {DepartmentStepConfiguration.class, TownStepConfiguration.class, UnzipStepConfiguration.class})
+@Import(value = {DepartmentStepConfiguration.class, TownStepConfiguration.class, UnzipStepConfiguration.class, FailedStepConfiguration.class})
 public class TownJobConfiguration {
   @Autowired
   private JobBuilderFactory jobBuilders;
@@ -37,14 +38,35 @@ public class TownJobConfiguration {
   @Qualifier("townStep")
   private Step townStep;
 
+  @Autowired
+  @Qualifier("failedStep")
+  private Step failedStep;
+
   @Bean
   public Job townJob() throws Exception {
     return jobBuilders.get("townJob")
+         .listener(traceJobExecutionListener())
+         .start(unzipStep)
+         .next(departmentStep)
+         .next(townStep)
+        .build();
+
+    /*
+    return jobBuilders.get("townJob")
         .listener(traceJobExecutionListener())
         .start(unzipStep)
-        .next(departmentStep)
-        .next(townStep)
+            .on("*").to(departmentStep)
+            .on("FAILED").to(failedStep)
+        .from(departmentStep)
+            .on("*").to(townStep)
+            .on("FAILED").to(failedStep)
+        .from(townStep)
+          .on("FAILED").to(failedStep)
+        .from(failedStep)
+          .on("*").fail()
+        .end()
         .build();
+    */
   }
 
   @Bean

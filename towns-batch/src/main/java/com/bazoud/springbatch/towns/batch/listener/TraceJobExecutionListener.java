@@ -11,7 +11,6 @@ public class TraceJobExecutionListener implements JobExecutionListener {
 
   @Override
   public void beforeJob(JobExecution jobExecution) {
-
   }
 
   @Override

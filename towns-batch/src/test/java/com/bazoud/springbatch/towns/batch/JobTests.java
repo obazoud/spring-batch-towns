@@ -21,7 +21,7 @@ import static org.junit.Assert.assertThat;
 
 @ContextConfiguration(classes = {TestInfrastructureConfiguration.class, StandaloneInfrastructureConfiguration.class, TownJobConfiguration.class})
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("dev")
+@ActiveProfiles("test")
 public class JobTests {
   @Autowired
   private JobLauncher jobLauncher;
