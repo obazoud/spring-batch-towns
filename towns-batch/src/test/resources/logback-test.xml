@@ -5,6 +5,8 @@
     </encoder>
   </appender>
 
+  <logger name="org.springframework.jdbc" level="WARN"/>
+
   <root>
     <level value="INFO"/>
     <appender-ref ref="CONSOLE"/>
